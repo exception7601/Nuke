@@ -18,7 +18,7 @@ gh release download \
   -D . \
   -O ${NAME} --clobber
 
-unzip ${NAME}
+unzip -o ${NAME}
 zip -rX ${NEW_NAME} Nuke.xcframework
 
 SUM=$(swift package compute-checksum ${NEW_NAME} )
@@ -26,9 +26,11 @@ SUM=$(swift package compute-checksum ${NEW_NAME} )
 echo ${VERSION} > version
 git add version
 git commit -m "new Version ${VERSION}"
-git push --tags
+# git tag -s -a ${VERSION} -m "v${VERSION}"
+git checkout -b release-v${VERSION}
+git push origin HEAD --tags
 
-gh release create ${VERSION} nuke-xcframeworks.zip --notes "checksum \`${SUM}\`"
+gh release create ${VERSION} ${NEW_NAME} --notes "checksum \`${SUM}\`"
 
 URL=$(gh release view ${VERSION} \
   --repo exception7601/Nuke \
