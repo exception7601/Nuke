@@ -38,6 +38,19 @@ URL=$(gh release view ${VERSION} \
   -q '.assets[0].apiUrl'
 )
 
-echo "${URL}.zip"
-echo ${SUM}
-# gh release create ${VERSION} ${NAME}  --notes  "checksum `${SUM}`'"
+NOTES=$(cat <<END
+SPM binaryTarget
+
+\`\`\`
+.binaryTarget(
+  name: "Nuke",
+  url: "${URL}.zip",
+  checksum: "${SUM}"
+)
+\`\`\`
+END
+)
+
+gh release edit ${VERSION} --notes  "${NOTES}"
+
+echo "${NOTES}"
