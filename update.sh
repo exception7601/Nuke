@@ -47,7 +47,7 @@ let package = Package(
     .library(
       name: "Nuke",
       targets: [
-        "Sentry",
+        "Nuke",
       ]
     ),
   ],
