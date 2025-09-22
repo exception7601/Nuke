@@ -35,8 +35,37 @@ fi
 JSON_CARTHAGE="$(jq --arg version "${VERSION}" --arg url "${DOWNLOAD_URL}" '. + { ($version): $url }' $JSON_FILE)" 
 echo $JSON_CARTHAGE > $JSON_FILE
 
-git add $JSON_FILE
+PACKAGE=$(cat <<END
+// swift-tools-version: 6.0
+
+import PackageDescription
+
+let package = Package(
+  name: "Nuke",
+  platforms: [.iOS(.v12)],
+  products: [
+    .library(
+      name: "Nuke",
+      targets: [
+        "Sentry",
+      ]
+    ),
+  ],
+
+  targets: [
+    .binaryTarget(
+      name: "Nuke",
+      url: "${DOWNLOAD_URL}",
+      checksum: "${SUM}"
+    )
+  ]
+)
+END
+)
+echo "$PACKAGE" > Package.swift
+git add Package.swift $JSON_FILE
 git commit -m "new Version ${VERSION}"
+
 # git push origin HEAD
 # echo ${VERSION} > version
 # git add version
