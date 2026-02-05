@@ -6,7 +6,6 @@ set -e
 REPO=kean/Nuke 
 BUILD=$(date +%s) 
 BUILD_COMMIT=$(git log --oneline --abbrev=16 --pretty=format:"%h" -1)
-JSON_FILE="Carthage/NukeBinary.json"
 # NEW_NAME=nuke-iOS-${BUILD_COMMIT}.zip
 MY_REPO=exception7601/Nuke
 VERSION=$(gh release list \
@@ -71,19 +70,16 @@ zip -rX "$NEW_NAME" "$FRAMEWORK_NAME.xcframework/"
 cd "$ORIGIN"
 
 DOWNLOAD_URL="https://github.com/${MY_REPO}/releases/download/${VERSION}/${NEW_NAME}"
+SUM=$(swift package compute-checksum "$NAME_LIBRARY")
 
-if [ ! -f $JSON_FILE ]; then
-  echo "{}" > $JSON_FILE
-fi
-
-# Make Carthage
-JSON_CARTHAGE="$(jq --arg version "${VERSION}" --arg url "${DOWNLOAD_URL}" '. + { ($version): $url }' $JSON_FILE)" 
-echo "$JSON_CARTHAGE" > $JSON_FILE
+# Update Package.swift
+sed -i '' "s|url: \".*\"|url: \"${DOWNLOAD_URL}\"|g" Package.swift
+sed -i '' "s|checksum: \".*\"|checksum: \"${SUM}\"|g" Package.swift
 
 echo "${VERSION}.${BUILD}" > version
 
 # echo "$PACKAGE" > Package.swift
-git add Package.swift $JSON_FILE
+git add Package.swift
 git add version
 git commit -m "new Version ${VERSION}"
 
@@ -96,14 +92,14 @@ git push origin HEAD --tags
 
 
 NOTES=$(cat <<END
-Carthage
-\`\`\`
-binary "https://raw.githubusercontent.com/${MY_REPO}/main/${JSON_FILE}"
-\`\`\`
+SPM binaryTarget
 
-Install
-\`\`\`
-carthage bootstrap --use-xcframeworks
+\`\`\`swift
+.binaryTarget(
+    name: "Nuke",
+    url: "${DOWNLOAD_URL}",
+    checksum: "${SUM}"
+)
 \`\`\`
 END
 )
