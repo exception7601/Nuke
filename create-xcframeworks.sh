@@ -79,6 +79,10 @@ sed -i '' "s|checksum: \".*\"|checksum: \"${SUM}\"|g" Package.swift
 echo "${VERSION}.${BUILD}" > version
 
 # echo "$PACKAGE" > Package.swift
+if ! git diff --quiet Nuke; then
+  git add Nuke
+fi
+  
 git add Package.swift
 git add version
 git commit -m "new Version ${VERSION}"
