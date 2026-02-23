@@ -91,7 +91,7 @@ git commit -m "new Version ${VERSION}"
 # git commit -m "new Version ${VERSION}"
 # git checkout -b release-v${VERSION}
 
-git tag -s -a "${VERSION}" -m "v${VERSION}"
+git tag -a "${VERSION}" -m "v${VERSION}"
 git push origin HEAD --tags
 
 
