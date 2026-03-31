@@ -1,7 +1,7 @@
 # Nuke
 
 ## Config Password login Xcode
-Pata repositórios privados o login na api do GitHub e feito usando keychain, criando uma nova senha para permitir que o Xcode tenha acesso ao repositório .
+Para repositórios privados o login na api do GitHub e feito usando keychain, criando uma nova senha para permitir que o Xcode tenha acesso ao repositório .
 
 ```bash
 security add-internet-password \
