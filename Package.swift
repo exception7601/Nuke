@@ -17,8 +17,8 @@ let package = Package(
   targets: [
     .binaryTarget(
       name: "Nuke",
-      url: "https://github.com/exception7601/Nuke/releases/download/13.0.2/nuke-1248465fc4e41ee2.zip",
-      checksum: "8007e524508244dbbe0fbf85a4c8652f9f7678af2d43e0145b4ab1a44a860935"
+      url: "https://github.com/exception7601/Nuke/releases/download/13.0.4/nuke-2c5f7a3ccac66ae7.zip",
+      checksum: "d928bbed52903d221190947974c9f57957c74f0bd7616a278c6d77ad7e42fd4a"
     )
   ]
 )
