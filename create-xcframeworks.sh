@@ -21,7 +21,7 @@ MODULE_PATH="Nuke"
 FRAMEWORK_NAME=Nuke
 ARCHIVE_NAME=nuke
 FRAMEWORK_PATH="Products/Library/Frameworks/Nuke.framework"
-PLATAFORMS=("iOS" "iOS Simulator")
+set -- "iOS" "iOS Simulator" "macOS,variant=Mac Catalyst"
 
 echo "${VERSION}"
 
@@ -41,16 +41,17 @@ git -C "$MODULE_PATH" checkout -f "$TAG_COMMIT"
 
 rm -rf "$ROOT"
 
-for PLATAFORM in "${PLATAFORMS[@]}"
-do
+for PLATFORM in "$@"; do
   xcodebuild archive \
     -project "$MODULE_PATH/$FRAMEWORK_NAME.xcodeproj" \
     -scheme "$FRAMEWORK_NAME" \
-    -destination "generic/platform=$PLATAFORM"\
-    -archivePath "$ROOT/$ARCHIVE_NAME-$PLATAFORM.xcarchive" \
+    -destination "generic/platform=$PLATFORM" \
+    -archivePath "$ROOT/$ARCHIVE_NAME-$PLATFORM.xcarchive" \
     MERGEABLE_LIBRARY=YES \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+    SUPPORTS_MACCATALYST=YES \
+    TARGETED_DEVICE_FAMILY="1,2" \
     DEBUG_INFORMATION_FORMAT=DWARF \
     MACH_O_TYPE=staticlib
 done
@@ -58,6 +59,7 @@ done
 xcodebuild -create-xcframework \
   -framework "$ROOT/$ARCHIVE_NAME-iOS.xcarchive/$FRAMEWORK_PATH" \
   -framework "$ROOT/$ARCHIVE_NAME-iOS Simulator.xcarchive/$FRAMEWORK_PATH" \
+  -framework "$ROOT/$ARCHIVE_NAME-macOS,variant=Mac Catalyst.xcarchive/$FRAMEWORK_PATH" \
   -output "$ROOT/$FRAMEWORK_NAME.xcframework"
 
 BUILD_COMMIT=$(git -C "$MODULE_PATH" log --oneline --abbrev=16 --pretty=format:"%h" -1)
